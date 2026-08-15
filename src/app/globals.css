@@ -22,5 +22,7 @@
 body {
     background: var(--background);
     font-family: AstaSans, Arial, Helvetica, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
