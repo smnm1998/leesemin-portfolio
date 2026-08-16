@@ -7,7 +7,7 @@ import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Project } from '@/data/projects';
 import Aside, { type Section } from '@/components/Aside';
 import { createContainerVariants, fadeUpVariants } from '@/lib/motionVariants';
-import { readMainScroll } from '@/lib/scrollMemory';
+import { readMainScroll, saveTargetSection, saveTargetScroll } from '@/lib/scrollMemory';
 import Lightbox from './Lightbox';
 import PipelineDiagram from './PipelineDiagram';
 import TimingChart from './TimingChart';
@@ -15,8 +15,9 @@ import ComparisonChart from './ComparisonChart';
 import MediaView from './MediaView';
 
 const styles = {
-  shell: 'flex h-screen overflow-hidden',
-  main: 'flex-1 overflow-y-auto',
+  // 홈과 동일하게 문서가 스크롤 주체 — Aside는 fixed, 본문은 그만큼 밀어준다.
+  shell: '',
+  main: 'ml-16',
   wrapper: 'flex flex-col items-center px-16 py-20',
   inner: 'w-full max-w-5xl flex flex-col gap-10',
   back: 'inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors w-fit',
@@ -55,16 +56,26 @@ export default function ProjectDetailView({ project }: { project: Project }) {
   const router = useRouter();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const goToSection = (id: Section) => router.push(`/#${id}`);
+  // 이동할 섹션을 명시적으로 저장해두고 홈으로 이동한다(URL 해시 대신). 해시는 홈 내부에서
+  // Aside를 눌러 스크롤만 해도 갱신되지 않아 낡은 값으로 남을 수 있는데, 그 낡은 해시가
+  // 다음 뒤로가기 때 스크롤 복원 로직보다 먼저 적용되며 "엉뚱한 섹션으로 튐" 버그를 만들었다.
+  const goToSection = (id: Section) => {
+    saveTargetSection(id);
+    router.push('/', { scroll: false });
+  };
 
-  // 목록 페이지의 스크롤 위치가 저장되어 있으면(즉, 거기서 넘어온 경우) 브라우저 히스토리로
-  // 돌아가 그 위치를 그대로 복원한다. 없으면(직접 URL 접근 등) 안전하게 프로젝트 섹션으로 이동.
+  // router.back()은 쓰지 않는다: 임베드된 아키텍처 다이어그램(iframe)이 테마 전환 등으로
+  // 자체 내비게이션을 하면 그것도 브라우저의 조인트 세션 히스토리에 쌓이는데, 그러면 "뒤로가기"가
+  // 실제 페이지 이탈이 아니라 그 iframe 안에서 있었던 일을 한 단계씩 되감아버린다(재현 확인함).
+  // 대신 홈이 계속 갱신해두는 스크롤 위치를 목적지로 넘기는 forward navigation만 사용한다.
   const goBackToList = () => {
-    if (readMainScroll() !== null) {
-      router.back();
+    const previousScroll = readMainScroll();
+    if (previousScroll === null) {
+      saveTargetSection('projects');
     } else {
-      router.push('/#projects');
+      saveTargetScroll(previousScroll);
     }
+    router.push('/', { scroll: false });
   };
 
   return (
