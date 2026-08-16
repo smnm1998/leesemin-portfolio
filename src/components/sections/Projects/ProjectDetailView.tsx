@@ -1,18 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Project } from '@/data/projects';
 import Aside, { type Section } from '@/components/Aside';
 import { createContainerVariants, fadeUpVariants } from '@/lib/motionVariants';
+import { readMainScroll } from '@/lib/scrollMemory';
 import Lightbox from './Lightbox';
 import PipelineDiagram from './PipelineDiagram';
 import TimingChart from './TimingChart';
 import ComparisonChart from './ComparisonChart';
+import MediaView from './MediaView';
 
 const styles = {
   shell: 'flex h-screen overflow-hidden',
@@ -32,7 +32,7 @@ const styles = {
   techRow: 'flex flex-wrap gap-2 mt-6',
   tech: 'px-2.5 py-1 rounded-full text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300',
 
-  cover: 'w-full max-w-[680px] self-center rounded-2xl overflow-hidden shadow-lg',
+  cover: 'w-fit max-w-full self-center rounded-2xl overflow-hidden shadow-lg',
 
   story: 'flex flex-col gap-11',
   section: 'flex flex-col gap-3',
@@ -57,6 +57,16 @@ export default function ProjectDetailView({ project }: { project: Project }) {
 
   const goToSection = (id: Section) => router.push(`/#${id}`);
 
+  // 목록 페이지의 스크롤 위치가 저장되어 있으면(즉, 거기서 넘어온 경우) 브라우저 히스토리로
+  // 돌아가 그 위치를 그대로 복원한다. 없으면(직접 URL 접근 등) 안전하게 프로젝트 섹션으로 이동.
+  const goBackToList = () => {
+    if (readMainScroll() !== null) {
+      router.back();
+    } else {
+      router.push('/#projects');
+    }
+  };
+
   return (
     <div className={styles.shell}>
       <Aside activeSection="projects" onSectionChange={goToSection} />
@@ -70,9 +80,9 @@ export default function ProjectDetailView({ project }: { project: Project }) {
             animate="visible"
           >
             <motion.div variants={fadeUpVariants}>
-              <Link href="/#projects" className={styles.back}>
+              <button type="button" onClick={goBackToList} className={styles.back}>
                 <ArrowLeft size={16} /> 목록으로
-              </Link>
+              </button>
             </motion.div>
 
             <motion.div className={styles.header} variants={fadeUpVariants}>
@@ -120,14 +130,14 @@ export default function ProjectDetailView({ project }: { project: Project }) {
               )}
             </motion.div>
 
-            {project.images && project.images.length > 0 && (
+            {project.media && project.media.length > 0 && (
               <motion.div className={styles.cover} variants={fadeUpVariants}>
-                <Image
-                  src={project.images[0]}
+                <MediaView
+                  item={project.media[0]}
                   alt={project.name}
                   width={1200}
                   height={578}
-                  className="w-full h-auto block"
+                  className="block max-w-[680px] max-h-[560px] w-auto h-auto object-contain"
                 />
               </motion.div>
             )}
@@ -170,19 +180,19 @@ export default function ProjectDetailView({ project }: { project: Project }) {
               ))}
             </motion.div>
 
-            {project.images && project.images.length > 0 && (
+            {project.media && project.media.length > 0 && (
               <motion.div className={styles.galleryBlock} variants={fadeUpVariants}>
-                <h2 className={styles.sectionTitle}>Screenshots</h2>
+                <h2 className={styles.sectionTitle}>Gallery</h2>
                 <div className={styles.gallery}>
-                  {project.images.map((src, i) => (
+                  {project.media.map((item, i) => (
                     <button
                       key={i}
                       className={styles.galleryItem}
                       onClick={() => setLightboxIndex(i)}
                     >
-                      <Image
-                        src={src}
-                        alt={`${project.name} screenshot ${i + 1}`}
+                      <MediaView
+                        item={item}
+                        alt={`${project.name} preview ${i + 1}`}
                         width={640}
                         height={360}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -202,9 +212,9 @@ export default function ProjectDetailView({ project }: { project: Project }) {
       </main>
 
       <AnimatePresence>
-        {lightboxIndex !== null && project.images && (
+        {lightboxIndex !== null && project.media && (
           <Lightbox
-            images={project.images}
+            media={project.media}
             initialIndex={lightboxIndex}
             onClose={() => setLightboxIndex(null)}
           />

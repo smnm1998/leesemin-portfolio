@@ -13,16 +13,19 @@ const styles = {
   track: 'flex-1 h-3.5 rounded-full bg-white dark:bg-white/10 overflow-hidden',
   fillBefore: 'h-full rounded-full bg-gray-300 dark:bg-gray-600',
   fillAfter: 'h-full rounded-full bg-gray-900 dark:bg-gray-100',
-  val: 'w-10 shrink-0 text-right text-[11px] font-mono text-gray-500 dark:text-gray-400 tabular-nums',
+  val: 'w-16 shrink-0 text-right text-[11px] font-mono text-gray-500 dark:text-gray-400 tabular-nums',
 } as const;
 
 export type ComparisonRow = {
   label: string;
   before: number;
   after: number;
+  unit?: string;
 };
 
 export default function ComparisonChart({ rows }: { rows: ComparisonRow[] }) {
+  const max = Math.max(...rows.flatMap((row) => [row.before, row.after]), 1);
+
   return (
     <div className={styles.panel}>
       <div className={styles.legend}>
@@ -35,25 +38,40 @@ export default function ComparisonChart({ rows }: { rows: ComparisonRow[] }) {
           수정 후
         </span>
       </div>
-      {rows.map((row) => (
-        <div key={row.label} className={styles.group}>
-          <p className={styles.groupLabel}>{row.label}</p>
-          <div className={styles.row}>
-            <span className={styles.rowLabel}>before</span>
-            <div className={styles.track}>
-              <div className={styles.fillBefore} style={{ width: `${row.before}%` }} />
+      {rows.map((row) => {
+        const unit = row.unit ?? '%';
+        return (
+          <div key={row.label} className={styles.group}>
+            <p className={styles.groupLabel}>{row.label}</p>
+            <div className={styles.row}>
+              <span className={styles.rowLabel}>before</span>
+              <div className={styles.track}>
+                <div
+                  className={styles.fillBefore}
+                  style={{ width: `${(row.before / max) * 100}%` }}
+                />
+              </div>
+              <span className={styles.val}>
+                {row.before}
+                {unit}
+              </span>
             </div>
-            <span className={styles.val}>{row.before}%</span>
-          </div>
-          <div className={styles.row}>
-            <span className={styles.rowLabel}>after</span>
-            <div className={styles.track}>
-              <div className={styles.fillAfter} style={{ width: `${row.after}%` }} />
+            <div className={styles.row}>
+              <span className={styles.rowLabel}>after</span>
+              <div className={styles.track}>
+                <div
+                  className={styles.fillAfter}
+                  style={{ width: `${(row.after / max) * 100}%` }}
+                />
+              </div>
+              <span className={styles.val}>
+                {row.after}
+                {unit}
+              </span>
             </div>
-            <span className={styles.val}>{row.after}%</span>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
