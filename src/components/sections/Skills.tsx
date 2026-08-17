@@ -104,10 +104,11 @@ const etcSkillGroups = [
   {
     category: 'Design / Tools',
     skills: [
-      { name: 'Figma', icon: '/icons/figma.svg' },
+      { name: 'turborepo', icon: '/icons/turborepo.svg' },
+      { name: 'Claude Code', icon: '/icons/anthropic.svg' },
       { name: 'Jira', icon: '/icons/jira.svg' },
       { name: 'Notion', icon: '/icons/notion.svg' },
-      { name: 'Claude Code', icon: '/icons/anthropic.svg' },
+      { name: 'Figma', icon: '/icons/figma.svg' },
     ],
   },
   {
