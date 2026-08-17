@@ -7,12 +7,13 @@ import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Project } from '@/data/projects';
 import Aside, { type Section } from '@/components/Aside';
 import { createContainerVariants, fadeUpVariants } from '@/lib/motionVariants';
-import { readMainScroll, saveTargetSection, saveTargetScroll } from '@/lib/scrollMemory';
+import { readMainScroll, saveReturnIntent } from '@/lib/scrollMemory';
 import Lightbox from './Lightbox';
 import ArchitectureDiagram from './ArchitectureDiagram';
 import TimingChart from './TimingChart';
 import ComparisonChart from './ComparisonChart';
 import MediaView from './MediaView';
+import TechTags from './TechTags';
 
 const styles = {
   // 홈과 동일하게 문서가 스크롤 주체 — 내비게이션은 fixed, 본문은 그만큼 밀어준다.
@@ -30,15 +31,13 @@ const styles = {
   links: 'flex gap-3 shrink-0',
   link: 'flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 dark:border-gray-600 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors',
 
-  techRow: 'flex flex-wrap gap-2 mt-6',
-  tech: 'px-2.5 py-1 rounded-full text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300',
-
   cover: 'w-fit max-w-full self-center rounded-2xl overflow-hidden shadow-lg',
 
   story: 'flex flex-col gap-11',
   section: 'flex flex-col gap-3',
   sectionTitle: 'text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100',
-  sectionContent: 'text-[15px] md:text-[17px] leading-[1.8] md:leading-[1.85] text-gray-500 dark:text-gray-400',
+  sectionContent:
+    'text-[15px] md:text-[17px] leading-[1.8] md:leading-[1.85] text-gray-500 dark:text-gray-400',
   sectionNote: 'text-sm text-gray-400 dark:text-gray-500 italic leading-relaxed',
   evidenceRow: 'flex flex-wrap items-center gap-x-3 gap-y-1.5',
   evidenceLabel: 'text-xs font-mono text-gray-400 dark:text-gray-500',
@@ -56,25 +55,20 @@ export default function ProjectDetailView({ project }: { project: Project }) {
   const router = useRouter();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // 이동할 섹션을 명시적으로 저장해두고 홈으로 이동한다(URL 해시 대신). 해시는 홈 내부에서
-  // Aside를 눌러 스크롤만 해도 갱신되지 않아 낡은 값으로 남을 수 있는데, 그 낡은 해시가
-  // 다음 뒤로가기 때 스크롤 복원 로직보다 먼저 적용되며 "엉뚱한 섹션으로 튐" 버그를 만들었다.
+  // URL 해시 대신 세션 마커로 넘긴다 — 해시는 홈 안에서 스크롤만 해도 갱신되지 않아
+  // 낡은 값이 남고, 그게 다음 복원보다 먼저 적용된다.
   const goToSection = (id: Section) => {
-    saveTargetSection(id);
+    saveReturnIntent({ section: id });
     router.push('/', { scroll: false });
   };
 
-  // router.back()은 쓰지 않는다: 임베드된 아키텍처 다이어그램(iframe)이 테마 전환 등으로
-  // 자체 내비게이션을 하면 그것도 브라우저의 조인트 세션 히스토리에 쌓이는데, 그러면 "뒤로가기"가
-  // 실제 페이지 이탈이 아니라 그 iframe 안에서 있었던 일을 한 단계씩 되감아버린다(재현 확인함).
-  // 대신 홈이 계속 갱신해두는 스크롤 위치를 목적지로 넘기는 forward navigation만 사용한다.
+  // router.back()을 쓰면 임베드 다이어그램(iframe)의 테마 전환이 쌓아둔 히스토리를 되감아
+  // 페이지를 벗어나지 못한다. 저장된 위치로 forward navigation만 한다.
   const goBackToList = () => {
     const previousScroll = readMainScroll();
-    if (previousScroll === null) {
-      saveTargetSection('projects');
-    } else {
-      saveTargetScroll(previousScroll);
-    }
+    saveReturnIntent(
+      previousScroll === null ? { section: 'projects' } : { scrollY: previousScroll },
+    );
     router.push('/', { scroll: false });
   };
 
@@ -130,15 +124,7 @@ export default function ProjectDetailView({ project }: { project: Project }) {
                   )}
                 </div>
               </div>
-              {project.tech.length > 0 && (
-                <div className={styles.techRow}>
-                  {project.tech.map((t) => (
-                    <span key={t} className={styles.tech}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <TechTags tech={project.tech} className="mt-6" />
             </motion.div>
 
             {project.media && project.media.length > 0 && (

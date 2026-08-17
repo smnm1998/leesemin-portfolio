@@ -1,70 +1,69 @@
-// 문서 자체가 스크롤 주체이므로 새로고침·뒤로가기의 위치 복원은 브라우저가 네이티브로
-// 처리한다. 여기 남은 값들은 SPA 내비게이션(상세페이지 -> 홈)에서만 쓰이는 1회성 마커다.
+/**
+ * 홈 페이지의 스크롤 위치 기억.
+ *
+ * 새로고침·뒤로가기 복원은 브라우저 네이티브 기능이 처리하므로, 여기 값들은
+ * SPA 내비게이션(상세페이지 → 홈)에서만 쓰인다.
+ */
 
 const SCROLL_KEY = 'portfolio:mainScrollTop';
-const SECTION_KEY = 'portfolio:activeSection';
-const TARGET_SECTION_KEY = 'portfolio:targetSection';
-const TARGET_SCROLL_KEY = 'portfolio:targetScroll';
+const RETURN_INTENT_KEY = 'portfolio:returnIntent';
 
-export function saveMainScroll(scrollTop: number) {
-  try {
-    sessionStorage.setItem(SCROLL_KEY, String(scrollTop));
-  } catch {
-    // sessionStorage 접근 불가(프라이빗 모드 등) — 무시
-  }
+/** 홈으로 돌아갔을 때 있어야 할 위치. 특정 섹션이거나 정확한 스크롤값이거나 둘 중 하나. */
+export type ReturnIntent = { section: string } | { scrollY: number };
+
+/** 홈에서 스크롤할 때마다 호출해 마지막 위치를 남긴다. */
+export function saveMainScroll(scrollY: number) {
+  write(SCROLL_KEY, String(scrollY));
 }
 
+/** 기록된 적이 없으면 null. */
 export function readMainScroll(): number | null {
-  try {
-    const raw = sessionStorage.getItem(SCROLL_KEY);
-    return raw === null ? null : Number(raw);
-  } catch {
-    return null;
-  }
-}
-
-export function saveActiveSection(id: string) {
-  try {
-    sessionStorage.setItem(SECTION_KEY, id);
-  } catch {
-    // sessionStorage 접근 불가(프라이빗 모드 등) — 무시
-  }
-}
-
-// "이 섹션으로 이동" 같은 명시적 이동 요청 전용. URL 해시와 달리 한 번 읽으면 즉시
-// 지워지므로, 이후 스크롤로 위치가 바뀌어도 낡은 값으로 남아있지 않는다.
-export function saveTargetSection(id: string) {
-  try {
-    sessionStorage.setItem(TARGET_SECTION_KEY, id);
-  } catch {
-    // sessionStorage 접근 불가(프라이빗 모드 등) — 무시
-  }
-}
-
-export function consumeTargetSection(): string | null {
-  return consume(TARGET_SECTION_KEY);
-}
-
-// "목록으로"처럼 원래 보던 스크롤 위치로 되돌아가야 할 때 쓰는 1회성 마커.
-export function saveTargetScroll(scrollTop: number) {
-  try {
-    sessionStorage.setItem(TARGET_SCROLL_KEY, String(scrollTop));
-  } catch {
-    // sessionStorage 접근 불가(프라이빗 모드 등) — 무시
-  }
-}
-
-export function consumeTargetScroll(): number | null {
-  const raw = consume(TARGET_SCROLL_KEY);
+  const raw = read(SCROLL_KEY);
   return raw === null ? null : Number(raw);
 }
 
-function consume(key: string): string | null {
+/**
+ * 홈으로 이동하기 직전에 목적지를 남긴다. URL 해시를 쓰지 않는 이유는 해시가 홈 안에서
+ * 스크롤만 해도 갱신되지 않아 낡은 값으로 남기 때문이다.
+ */
+export function saveReturnIntent(intent: ReturnIntent) {
+  write(RETURN_INTENT_KEY, JSON.stringify(intent));
+}
+
+/** 읽는 즉시 삭제해 다음 방문에 영향을 주지 않는다. */
+export function consumeReturnIntent(): ReturnIntent | null {
+  const raw = read(RETURN_INTENT_KEY);
+  if (raw === null) return null;
+
+  remove(RETURN_INTENT_KEY);
   try {
-    const value = sessionStorage.getItem(key);
-    if (value !== null) sessionStorage.removeItem(key);
-    return value;
+    return JSON.parse(raw) as ReturnIntent;
   } catch {
     return null;
+  }
+}
+
+// sessionStorage는 프라이빗 모드 등에서 접근이 막힐 수 있어 전부 감싼다.
+function write(key: string, value: string) {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // 저장 못 해도 기능이 죽지는 않는다(복원만 생략됨)
+  }
+}
+
+function read(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function remove(key: string) {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // 무시
   }
 }

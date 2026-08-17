@@ -36,16 +36,12 @@ const rotatingWords = [
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
-
-  // 단어 순환
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % rotatingWords.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  // 타이핑 효과
   useEffect(() => {
     const word = rotatingWords[index];
     setDisplayedText('');
@@ -63,12 +59,9 @@ export default function Hero() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {/* 왼쪽: 텍스트 */}
         <div className={styles.textCol}>
           <p className={styles.greeting}>안녕하세요!</p>
-          {/* 페이지의 유일한 h1. 순환 문구는 장식이라 aria-hidden으로 빼고, 스크린리더와
-              크롤러에는 고정 문구가 제목으로 읽히게 한다(Tailwind preflight가 heading
-              기본 스타일을 지우므로 보이는 모습은 그대로다). */}
+          {/* 페이지의 유일한 h1 — preflight가 heading 기본 스타일을 지우므로 외형은 그대로다 */}
           <h1 className={styles.typingRow}>
             <span className={styles.typingText}>{displayedText}</span>
             <motion.span
@@ -86,8 +79,6 @@ export default function Hero() {
             <span className={styles.staticText}>개발자 이세민입니다.</span>
           </h1>
         </div>
-
-        {/* 오른쪽: 사진 */}
         <div className={styles.photoCol}>
           <div className={styles.photoWrapper}>
             <Image

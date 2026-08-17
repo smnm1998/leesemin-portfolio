@@ -10,8 +10,6 @@ const styles = {
   wrapper: 'flex-1 flex flex-col items-center justify-center gap-8 px-5 md:px-10 lg:px-16',
   header: 'w-full max-w-5xl',
   body: 'w-full max-w-5xl flex flex-col gap-8',
-
-  // 좁은 화면에서는 1열, md 이상에서 2x2
   mainGrid: 'grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10',
   mainItem: 'flex items-start gap-4 md:gap-6',
   mainIconContainer:
@@ -22,8 +20,6 @@ const styles = {
   mainDescs: 'flex flex-col gap-1',
   mainDesc:
     "text-sm text-gray-400 dark:text-gray-300 leading-relaxed before:content-['·'] before:mr-1.5",
-
-  // 하단 기타 스킬
   sectionDivider: 'border-t border-gray-200 dark:border-gray-600',
   etcGroups: 'flex flex-wrap justify-center gap-x-10 gap-y-5',
   etcGroup: 'flex flex-col items-center gap-2.5',

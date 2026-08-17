@@ -18,11 +18,12 @@ export type Project = {
   live: string;
   gradient: string;
   media?: MediaItem[];
-  // 상세 아키텍처 다이어그램(임베드). 가로로 넓어 데스크톱에서만 인라인으로 보여주고,
-  // 모바일·태블릿에서는 pipeline 요약을 대신 띄운 뒤 전체화면으로 열도록 한다.
-  // width/height는 다이어그램 SVG의 viewBox 크기 — 종횡비를 맞추는 데 쓴다.
+  /**
+   * 임베드할 상세 아키텍처 다이어그램. 가로로 넓어 데스크톱에서만 인라인으로 보여준다.
+   * width/height는 SVG viewBox 크기로, 종횡비를 맞추는 데 쓴다.
+   */
   architectureDiagram?: { src: string; width: number; height: number };
-  // 좁은 화면용 아키텍처 요약. architectureDiagram과 함께 두면 화면 폭에 따라 갈아끼운다.
+  /** 좁은 화면용 아키텍처 요약. architectureDiagram과 함께 두면 화면 폭에 따라 갈아끼운다. */
   pipeline?: {
     stages: PipelineStage[];
     outputs: PipelineStage[];
