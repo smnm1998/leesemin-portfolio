@@ -45,6 +45,7 @@ export default function MediaView({
       <video
         ref={videoRef}
         src={item.src}
+        poster={item.poster}
         className={className}
         loop
         muted
