@@ -9,8 +9,10 @@ import SectionHeader from './shared/SectionHeader';
 const styles = {
   wrapper: 'flex-1 flex flex-col items-center justify-center gap-8 px-5 md:px-10 lg:px-16',
   header: 'w-full max-w-5xl',
-  body: 'w-full max-w-5xl flex flex-col gap-8',
-  mainGrid: 'grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10',
+  // 설명이 붙은 주력 스킬은 왼쪽 세로, 아이콘만 나열하는 기타 스킬은 오른쪽.
+  // lg 미만에서는 위아래로 쌓는다.
+  body: 'w-full max-w-5xl grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-0',
+  mainCol: 'flex flex-col gap-6',
   mainItem: 'flex items-start gap-4 md:gap-6',
   mainIconContainer:
     'w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 shrink-0 flex items-center justify-center',
@@ -20,15 +22,16 @@ const styles = {
   mainDescs: 'flex flex-col gap-1',
   mainDesc:
     "text-sm text-gray-400 dark:text-gray-300 leading-relaxed before:content-['·'] before:mr-1.5",
-  sectionDivider: 'border-t border-gray-200 dark:border-gray-600',
-  etcGroups: 'flex flex-wrap justify-center gap-x-10 gap-y-5',
-  etcGroup: 'flex flex-col items-center gap-2.5',
+  // 두 컬럼 사이 구분선 — 좁은 화면에서는 위쪽 가로선, lg부터는 왼쪽 세로선.
+  etcCol:
+    'flex flex-col gap-5 border-t border-gray-200 dark:border-gray-600 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12',
+  etcGroup: 'flex flex-col gap-2.5',
   etcCategory:
     'text-[10px] font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400',
-  etcRow: 'flex gap-4',
-  etcItem: 'flex flex-col items-center gap-1.5',
+  etcRow: 'flex flex-wrap gap-x-5 gap-y-3',
+  etcItem: 'flex flex-col items-center gap-1.5 w-16',
   etcIcon: 'w-9 h-9 object-contain',
-  etcName: 'text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap',
+  etcName: 'text-xs text-gray-600 dark:text-gray-300 text-center leading-tight',
 } as const;
 
 const containerVariants = createContainerVariants(0.08);
@@ -71,22 +74,32 @@ const etcSkillGroups = [
     skills: [
       { name: 'HTML5', icon: '/icons/html5.svg' },
       { name: 'CSS3', icon: '/icons/css3.svg' },
+      { name: 'Zustand', icon: '/icons/zustand.svg' },
     ],
   },
   {
     category: 'Backend',
-    skills: [{ name: 'Node.js', icon: '/icons/node.svg' }],
+    skills: [
+      { name: 'Node.js', icon: '/icons/node.svg' },
+      { name: 'NestJS', icon: '/icons/nestjs.svg' },
+    ],
   },
   {
     category: 'Database',
     skills: [
       { name: 'MariaDB', icon: '/icons/mariadb.svg' },
+      { name: 'PostgreSQL', icon: '/icons/postgresql.svg' },
+      { name: 'Prisma', icon: '/icons/prisma.svg' },
       { name: 'Supabase', icon: '/icons/supabase.svg' },
+      { name: 'Neon', icon: '/icons/neon-tech.svg' },
     ],
   },
   {
     category: 'Deployment',
-    skills: [{ name: 'Vercel', icon: '/icons/vercel.svg' }],
+    skills: [
+      { name: 'Vercel', icon: '/icons/vercel.svg' },
+      { name: 'Railway', icon: '/icons/railway.svg' },
+    ],
   },
   {
     category: 'Design / Tools',
@@ -94,13 +107,17 @@ const etcSkillGroups = [
       { name: 'Figma', icon: '/icons/figma.svg' },
       { name: 'Jira', icon: '/icons/jira.svg' },
       { name: 'Notion', icon: '/icons/notion.svg' },
+      { name: 'Claude Code', icon: '/icons/anthropic.svg' },
     ],
   },
   {
     category: 'API',
     skills: [
-      { name: 'OpenAI', icon: '/icons/openai.svg' },
-      { name: 'KakaoMap', icon: '/icons/kakaomap.png' },
+      { name: 'OpenAI API', icon: '/icons/openai.svg' },
+      { name: 'KakaoMap API', icon: '/icons/kakaomap.png' },
+      { name: 'Spotify API', icon: '/icons/spotify.svg' },
+      { name: 'iTunes Search API', icon: '/icons/applemusic.svg' },
+      { name: 'Last.fm API', icon: '/icons/lastfm.svg' },
     ],
   },
 ] as const;
@@ -119,7 +136,7 @@ export default function Skills() {
         initial="hidden"
         animate={isInView ? 'visible' : 'hidden'}
       >
-        <motion.div className={styles.mainGrid} variants={containerVariants}>
+        <motion.div className={styles.mainCol} variants={containerVariants}>
           {mainSkills.map(({ name, icon, descs }) => (
             <motion.div key={name} className={styles.mainItem} variants={fadeUpVariants}>
               <div className={styles.mainIconContainer}>
@@ -139,9 +156,7 @@ export default function Skills() {
           ))}
         </motion.div>
 
-        <motion.hr className={styles.sectionDivider} variants={fadeUpVariants} />
-
-        <motion.div className={styles.etcGroups} variants={containerVariants}>
+        <motion.div className={styles.etcCol} variants={containerVariants}>
           {etcSkillGroups.map(({ category, skills }) => (
             <motion.div key={category} className={styles.etcGroup} variants={fadeUpVariants}>
               <span className={styles.etcCategory}>{category}</span>
