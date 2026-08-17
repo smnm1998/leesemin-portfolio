@@ -1,3 +1,8 @@
+export type PipelineStage = {
+  label: string;
+  detail?: string;
+};
+
 export type MediaItem =
   | { type: 'image'; src: string; width?: number; height?: number }
   | { type: 'video'; src: string; width?: number; height?: number };
@@ -13,8 +18,15 @@ export type Project = {
   live: string;
   gradient: string;
   media?: MediaItem[];
-  // width/height는 다이어그램 SVG의 viewBox 크기 — 임베드 시 종횡비를 맞추는 데 쓴다.
+  // 상세 아키텍처 다이어그램(임베드). 가로로 넓어 데스크톱에서만 인라인으로 보여주고,
+  // 모바일·태블릿에서는 pipeline 요약을 대신 띄운 뒤 전체화면으로 열도록 한다.
+  // width/height는 다이어그램 SVG의 viewBox 크기 — 종횡비를 맞추는 데 쓴다.
   architectureDiagram?: { src: string; width: number; height: number };
+  // 좁은 화면용 아키텍처 요약. architectureDiagram과 함께 두면 화면 폭에 따라 갈아끼운다.
+  pipeline?: {
+    stages: PipelineStage[];
+    outputs: PipelineStage[];
+  };
   sections?: {
     title: string;
     content: string;
@@ -61,6 +73,18 @@ export const projects: Project[] = [
       src: '/projects/fitfoyo/architecture.html',
       width: 1210,
       height: 654,
+    },
+    pipeline: {
+      stages: [
+        { label: '사용자 자연어', detail: '"닭가슴살 먹고 30분 뛰었어"' },
+        { label: 'Function Calling (pass 1)', detail: 'tool 호출로 기록 작업 결정' },
+        { label: '서버 CRUD · 칼로리 재계산', detail: '식단·운동 레코드 반영' },
+        { label: 'GPT (pass 2)', detail: 'json 자연어 응답 · 추천 생성' },
+      ],
+      outputs: [
+        { label: '식단 · 운동 레코드', detail: 'DB 근거 칼로리' },
+        { label: '맞춤 추천', detail: '1인칭 코칭' },
+      ],
     },
     sections: [
       {
@@ -142,6 +166,19 @@ export const projects: Project[] = [
       src: '/projects/artune/architecture.html',
       width: 1420,
       height: 652,
+    },
+    pipeline: {
+      stages: [
+        { label: '사용자 입력', detail: '감정을 담은 글' },
+        { label: 'GPT-4.1-mini', detail: '감정 분석 · 시드곡 생성' },
+        { label: 'Last.fm', detail: '협업 필터링 확장' },
+        { label: 'iTunes Search', detail: '재생 가능 트랙 해석' },
+        { label: '지역 쿼터 선정', detail: '한국:팝:일본 6:3:1' },
+      ],
+      outputs: [
+        { label: 'Immerse', detail: '감정 심취 20곡' },
+        { label: 'Soothe', detail: '감정 완화 20곡' },
+      ],
     },
     sections: [
       {

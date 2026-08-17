@@ -87,7 +87,10 @@ export default function Home() {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id);
         },
-        { threshold: 0.5 },
+        // 위아래를 50%씩 깎아 뷰포트 정중앙에 걸친 섹션만 잡는다. threshold로 "섹션의 n%가
+        // 보이는가"를 보면, 뷰포트보다 긴 섹션(좁은 화면의 Projects)은 그 비율에 영원히
+        // 도달하지 못해 활성화되지 않는다. resolveActiveSection()의 기준과도 일치한다.
+        { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
       );
       observer.observe(el);
       observers.push(observer);
@@ -103,17 +106,20 @@ export default function Home() {
   return (
     <div>
       <Aside activeSection={activeSection} onSectionChange={scrollToSection} />
-      <main className="ml-16">
-        <section id="home" className="h-screen">
+      {/* pb-16: 하단 탭바에 콘텐츠가 가리지 않도록 (lg 이상은 좌측 사이드바로 전환) */}
+      <main className="pb-16 lg:pb-0 lg:ml-16">
+        {/* min-h-screen + flex — 좁은 화면에서 콘텐츠가 한 화면을 넘으면 잘리지 않고 늘어나되,
+            자식이 flex-1로 남은 높이를 채운다(h-full은 부모 높이가 auto면 무시되므로 쓰지 않는다) */}
+        <section id="home" className="min-h-screen flex flex-col">
           <Hero />
         </section>
-        <section id="skills" className="h-screen">
+        <section id="skills" className="min-h-screen flex flex-col">
           <Skills />
         </section>
-        <section id="projects">
+        <section id="projects" className="flex flex-col">
           <Projects />
         </section>
-        <section id="contact" className="h-screen">
+        <section id="contact" className="min-h-screen flex flex-col">
           <Contact />
         </section>
       </main>

@@ -7,14 +7,15 @@ import { useSectionInView } from '@/lib/useSectionInView';
 import SectionHeader from './shared/SectionHeader';
 
 const styles = {
-  wrapper: 'h-full flex flex-col items-center justify-center gap-8 px-16',
+  wrapper: 'flex-1 flex flex-col items-center justify-center gap-8 px-5 md:px-10 lg:px-16',
   header: 'w-full max-w-5xl',
   body: 'w-full max-w-5xl flex flex-col gap-8',
 
-  // 2x2 주력
-  mainGrid: 'grid grid-cols-2 gap-10',
-  mainItem: 'flex items-start gap-6',
-  mainIconContainer: 'w-28 h-28 shrink-0 flex items-center justify-center',
+  // 좁은 화면에서는 1열, md 이상에서 2x2
+  mainGrid: 'grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10',
+  mainItem: 'flex items-start gap-4 md:gap-6',
+  mainIconContainer:
+    'w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 shrink-0 flex items-center justify-center',
   mainIcon: 'w-full h-full object-contain',
   mainText: 'flex flex-col gap-2 pt-1',
   mainName: 'text-xl font-semibold text-gray-900 dark:text-gray-100',

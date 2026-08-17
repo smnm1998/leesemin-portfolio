@@ -9,7 +9,7 @@ import ProjectRow from "./ProjectRow";
 
 const styles = {
     wrapper:
-        "h-full flex flex-col items-center justify-center gap-8 px-16 overflow-y-auto py-16",
+        "flex-1 flex flex-col items-center justify-center gap-8 px-5 py-12 md:px-10 lg:px-16 lg:py-16",
     header: "w-full max-w-5xl shrink-0",
     body: "w-full max-w-5xl flex flex-col gap-10",
 } as const;

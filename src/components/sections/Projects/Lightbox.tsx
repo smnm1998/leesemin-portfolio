@@ -64,7 +64,7 @@ export default function Lightbox({
       <AnimatePresence mode="wait">
         <motion.div
           key={idx}
-          className="relative max-w-5xl max-h-[85vh] mx-16 rounded-2xl overflow-hidden shadow-2xl"
+          className="relative max-w-5xl max-h-[85vh] mx-4 sm:mx-10 lg:mx-16 rounded-2xl overflow-hidden shadow-2xl"
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}

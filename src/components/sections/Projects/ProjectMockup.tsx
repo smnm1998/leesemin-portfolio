@@ -7,7 +7,7 @@ import type { Project } from '@/data/projects';
 import MediaView from './MediaView';
 
 const styles = {
-  mockupWrap: 'w-96 shrink-0',
+  mockupWrap: 'w-full lg:w-96 lg:shrink-0',
   mockup: 'w-full aspect-video rounded-2xl overflow-hidden shadow-lg',
   mockupBar: 'flex items-center gap-1.5 px-4 py-3',
   mockupDot: 'w-2.5 h-2.5 rounded-full',

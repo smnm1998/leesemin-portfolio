@@ -8,20 +8,32 @@ import { useThemeStore } from '@/store/themeStore';
 export type Section = 'home' | 'projects' | 'skills' | 'contact';
 
 const styles = {
+  // lg 미만: 하단 탭바 / lg 이상: 좌측 세로 사이드바.
   // fixed — 문서(body)가 스크롤 주체가 되도록 레이아웃에서 빼둔다. 이렇게 해야 브라우저의
   // 네이티브 스크롤 복원이 동작한다(중첩 overflow 컨테이너에는 적용되지 않음).
-  aside:
-    'fixed left-0 top-0 z-20 w-16 h-screen flex flex-col items-center py-10 gap-4 border-r border-gray-200 dark:border-gray-600 bg-[var(--background)] transition-colors duration-300',
+  // 모달(z-50)보다는 아래, 본문보다는 위.
+  nav: [
+    'fixed z-30 flex bg-[var(--background)] transition-colors duration-300',
+    'bottom-0 left-0 right-0 h-16 flex-row items-center justify-around px-2',
+    'lg:top-0 lg:right-auto lg:bottom-auto lg:h-screen lg:w-16 lg:flex-col lg:justify-start lg:gap-4 lg:px-0 lg:py-10 lg:border-r lg:border-gray-200 lg:dark:border-gray-600',
+  ].join(' '),
+  // 하단 탭바의 상단 구분선 — 양 끝으로 갈수록 사라지게. 사이드바일 때는 lg:border-r가 대신한다.
+  topEdge:
+    'lg:hidden absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-gray-600',
   navItem: 'group relative flex items-center',
   buttonActive:
     'p-3 rounded-xl transition-all duration-200 cursor-pointer bg-gray-900 text-white dark:bg-white/90 dark:text-gray-900',
   buttonInactive:
     'p-3 rounded-xl transition-all duration-200 cursor-pointer text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-white/10',
+  // 툴팁은 hover가 있는 데스크톱에서만 — 터치 기기에서는 의미가 없다.
   tooltip:
-    'absolute left-full ml-3 px-2 py-1 bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10',
-  toggleWrapper: 'mt-auto group relative flex items-center',
+    'hidden lg:block absolute left-full ml-3 px-2 py-1 bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10',
+  // 하단 탭바에는 내비게이션만 두고, 테마 토글은 우측 상단에 따로 띄운다.
+  // lg 이상에서는 relative로 돌려 사이드바 맨 아래에 다시 들어간다.
+  toggleWrapper:
+    'group flex items-center fixed top-4 right-4 z-30 lg:relative lg:top-auto lg:right-auto lg:mt-auto',
   toggleButton:
-    'group w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-500 transition-all duration-200 cursor-pointer text-gray-400 overflow-hidden',
+    'group w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-500 bg-[var(--background)] transition-all duration-200 cursor-pointer text-gray-400 overflow-hidden',
   toggleIconLight:
     'flex items-center justify-center transition-colors duration-200 group-hover:text-yellow-400',
   toggleIconDark:
@@ -55,7 +67,9 @@ export default function Aside({ activeSection, onSectionChange }: AsideProps) {
   }, []);
 
   return (
-    <aside className={styles.aside}>
+    <nav className={styles.nav}>
+      <span className={styles.topEdge} />
+
       {navItems.map(({ id, icon: Icon, label }) => (
         <div key={id} className={styles.navItem}>
           <button
@@ -100,6 +114,6 @@ export default function Aside({ activeSection, onSectionChange }: AsideProps) {
           {isDark ? '라이트 모드' : '다크 모드'}
         </span>
       </div>
-    </aside>
+    </nav>
   );
 }

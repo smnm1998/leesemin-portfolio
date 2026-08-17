@@ -6,18 +6,21 @@ import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 
 const styles = {
-  wrapper: 'h-full flex flex-col items-center justify-center gap-22 px-16',
-  grid: 'grid grid-cols-2 gap-20 w-full max-w-3xl items-center',
-  textCol: 'flex flex-col gap-1',
-  greeting: 'text-2xl text-gray-400 dark:text-gray-500',
-  typingRow: 'text-4xl leading-snug',
+  wrapper: 'flex-1 flex flex-col items-center justify-center gap-12 px-5 md:px-10 lg:gap-22 lg:px-16',
+  // 좁은 화면에서는 사진을 위, 텍스트를 아래로 한 줄씩 쌓는다.
+  grid:
+    'flex flex-col-reverse items-center gap-8 w-full max-w-3xl md:grid md:grid-cols-2 md:gap-12 md:items-center lg:gap-20',
+  textCol: 'flex flex-col gap-1 text-center md:text-left',
+  greeting: 'text-xl text-gray-400 dark:text-gray-500 md:text-2xl',
+  typingRow: 'text-2xl leading-snug sm:text-3xl lg:text-4xl',
   typingText: 'text-yellow-400 dark:text-yellow-400',
-  cursor: 'inline-block w-0.5 h-9 bg-gray-900 dark:bg-gray-100 ml-1 align-middle',
+  cursor:
+    'inline-block w-0.5 h-6 sm:h-7 lg:h-9 bg-gray-900 dark:bg-gray-100 ml-1 align-middle',
   staticText: 'text-gray-900 dark:text-gray-100',
   photoCol: 'flex justify-center',
-  photoWrapper: 'w-64 h-64 rounded-2xl overflow-hidden',
+  photoWrapper: 'w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-2xl overflow-hidden',
   photo: 'w-full h-full object-cover',
-  description: 'text-center text-gray-500 dark:text-gray-300 text-base leading-relaxed',
+  description: 'text-center text-gray-500 dark:text-gray-300 text-sm sm:text-base leading-relaxed',
   scrollBtn:
     'mt-2 text-gray-300 dark:text-gray-600 cursor-pointer hover:text-gray-400 dark:hover:text-gray-500 transition-colors',
 } as const;

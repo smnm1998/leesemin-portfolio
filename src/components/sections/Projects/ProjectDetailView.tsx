@@ -15,10 +15,10 @@ import ComparisonChart from './ComparisonChart';
 import MediaView from './MediaView';
 
 const styles = {
-  // 홈과 동일하게 문서가 스크롤 주체 — Aside는 fixed, 본문은 그만큼 밀어준다.
+  // 홈과 동일하게 문서가 스크롤 주체 — 내비게이션은 fixed, 본문은 그만큼 밀어준다.
   shell: '',
-  main: 'ml-16',
-  wrapper: 'flex flex-col items-center px-16 py-20',
+  main: 'pb-16 lg:pb-0 lg:ml-16',
+  wrapper: 'flex flex-col items-center px-5 py-12 md:px-10 lg:px-16 lg:py-20',
   inner: 'w-full max-w-5xl flex flex-col gap-10',
   back: 'inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors w-fit',
 
@@ -26,7 +26,7 @@ const styles = {
   context: 'text-xs font-medium tracking-widest uppercase text-gray-400 dark:text-gray-500',
   titleRow: 'flex items-end justify-between gap-6 flex-wrap',
   titleMain: 'flex items-baseline gap-3 flex-wrap',
-  name: 'text-5xl font-semibold text-gray-900 dark:text-gray-100',
+  name: 'text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-gray-100',
   links: 'flex gap-3 shrink-0',
   link: 'flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 dark:border-gray-600 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors',
 
@@ -37,8 +37,8 @@ const styles = {
 
   story: 'flex flex-col gap-11',
   section: 'flex flex-col gap-3',
-  sectionTitle: 'text-2xl font-semibold text-gray-900 dark:text-gray-100',
-  sectionContent: 'text-[17px] leading-[1.85] text-gray-500 dark:text-gray-400',
+  sectionTitle: 'text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100',
+  sectionContent: 'text-[15px] md:text-[17px] leading-[1.8] md:leading-[1.85] text-gray-500 dark:text-gray-400',
   sectionNote: 'text-sm text-gray-400 dark:text-gray-500 italic leading-relaxed',
   evidenceRow: 'flex flex-wrap items-center gap-x-3 gap-y-1.5',
   evidenceLabel: 'text-xs font-mono text-gray-400 dark:text-gray-500',
@@ -46,7 +46,7 @@ const styles = {
     'text-xs font-mono text-gray-500 dark:text-gray-400 underline decoration-gray-300 dark:decoration-gray-600 underline-offset-2 hover:text-gray-900 dark:hover:text-gray-100 transition-colors',
 
   galleryBlock: 'flex flex-col gap-5',
-  gallery: 'grid grid-cols-3 gap-4',
+  gallery: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4',
   galleryItem: 'group relative aspect-video rounded-xl overflow-hidden shadow-lg cursor-pointer',
 } as const;
 
@@ -148,7 +148,9 @@ export default function ProjectDetailView({ project }: { project: Project }) {
                   alt={project.name}
                   width={1200}
                   height={578}
-                  className="block max-w-[680px] max-h-[560px] w-auto h-auto object-contain"
+                  // max-w-full이 없으면 좁은 화면에서 이미지가 화면보다 넓게 그려진 뒤
+                  // 부모의 overflow-hidden에 잘려서 "확대된 것처럼" 보인다.
+                  className="block w-auto h-auto max-w-full max-h-[320px] sm:max-h-[440px] lg:max-w-[680px] lg:max-h-[560px] object-contain"
                 />
               </motion.div>
             )}
@@ -159,6 +161,7 @@ export default function ProjectDetailView({ project }: { project: Project }) {
                 <ArchitectureDiagram
                   diagram={project.architectureDiagram}
                   title={`${project.name} architecture diagram`}
+                  pipeline={project.pipeline}
                 />
               </motion.div>
             )}

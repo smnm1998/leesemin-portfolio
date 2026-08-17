@@ -45,7 +45,7 @@ export default function Contact() {
   const { ref, isInView } = useSectionInView(0.5);
 
   return (
-    <div className="relative h-full flex items-center justify-center">
+    <div className="relative flex-1 flex items-center justify-center">
       {/* Contact 타이틀 — 상단 고정 */}
       <motion.p
         className="absolute top-30 left-1/2 -translate-x-1/2 text-lg font-semibold tracking-widest text-gray-500 dark:text-gray-400 uppercase"
