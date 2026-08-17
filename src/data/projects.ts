@@ -5,7 +5,17 @@ export type PipelineStage = {
 
 export type MediaItem =
   | { type: 'image'; src: string; width?: number; height?: number }
-  | { type: 'video'; src: string; width?: number; height?: number };
+  | {
+      type: 'video';
+      src: string;
+      width?: number;
+      height?: number;
+      /**
+       * 첫 프레임 이미지. iOS Safari는 한 번도 재생하지 않은 video의 프레임을
+       * 그리지 않아, 이게 없으면 자동재생하지 않는 갤러리 썸네일이 빈 칸이 된다.
+       */
+      poster?: string;
+    };
 
 export type Project = {
   slug: string;
@@ -66,9 +76,21 @@ export const projects: Project[] = [
     live: 'https://fitfoyo.vercel.app',
     gradient: 'from-emerald-500 via-green-600 to-teal-700',
     media: [
-      { type: 'video', src: '/projects/fitfoyo/calendar.mp4' },
-      { type: 'video', src: '/projects/fitfoyo/ai-chat.mp4' },
-      { type: 'video', src: '/projects/fitfoyo/calorie.mp4' },
+      {
+        type: 'video',
+        src: '/projects/fitfoyo/calendar.mp4',
+        poster: '/projects/fitfoyo/calendar-poster.jpg',
+      },
+      {
+        type: 'video',
+        src: '/projects/fitfoyo/ai-chat.mp4',
+        poster: '/projects/fitfoyo/ai-chat-poster.jpg',
+      },
+      {
+        type: 'video',
+        src: '/projects/fitfoyo/calorie.mp4',
+        poster: '/projects/fitfoyo/calorie-poster.jpg',
+      },
     ],
     architectureDiagram: {
       src: '/projects/fitfoyo/architecture.html',
