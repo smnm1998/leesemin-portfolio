@@ -9,7 +9,7 @@ import Aside, { type Section } from '@/components/Aside';
 import { createContainerVariants, fadeUpVariants } from '@/lib/motionVariants';
 import { readMainScroll, saveTargetSection, saveTargetScroll } from '@/lib/scrollMemory';
 import Lightbox from './Lightbox';
-import PipelineDiagram from './PipelineDiagram';
+import ArchitectureDiagram from './ArchitectureDiagram';
 import TimingChart from './TimingChart';
 import ComparisonChart from './ComparisonChart';
 import MediaView from './MediaView';
@@ -153,12 +153,12 @@ export default function ProjectDetailView({ project }: { project: Project }) {
               </motion.div>
             )}
 
-            {project.pipeline && (
+            {project.architectureDiagram && (
               <motion.div className={styles.section} variants={fadeUpVariants}>
                 <h2 className={styles.sectionTitle}>Architecture</h2>
-                <PipelineDiagram
-                  stages={project.pipeline.stages}
-                  outputs={project.pipeline.outputs}
+                <ArchitectureDiagram
+                  diagram={project.architectureDiagram}
+                  title={`${project.name} architecture diagram`}
                 />
               </motion.div>
             )}

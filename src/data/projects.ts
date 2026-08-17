@@ -1,8 +1,3 @@
-export type PipelineStage = {
-  label: string;
-  detail?: string;
-};
-
 export type MediaItem =
   | { type: 'image'; src: string; width?: number; height?: number }
   | { type: 'video'; src: string; width?: number; height?: number };
@@ -18,6 +13,8 @@ export type Project = {
   live: string;
   gradient: string;
   media?: MediaItem[];
+  // width/height는 다이어그램 SVG의 viewBox 크기 — 임베드 시 종횡비를 맞추는 데 쓴다.
+  architectureDiagram?: { src: string; width: number; height: number };
   sections?: {
     title: string;
     content: string;
@@ -26,10 +23,6 @@ export type Project = {
     timingChart?: { label: string; segments: { label: string; seconds: number }[] }[];
     comparisonChart?: { label: string; before: number; after: number; unit?: string }[];
   }[];
-  pipeline?: {
-    stages: PipelineStage[];
-    outputs: PipelineStage[];
-  };
 };
 
 export const projects: Project[] = [
@@ -64,17 +57,10 @@ export const projects: Project[] = [
       { type: 'video', src: '/projects/fitfoyo/ai-chat.mp4' },
       { type: 'video', src: '/projects/fitfoyo/calorie.mp4' },
     ],
-    pipeline: {
-      stages: [
-        { label: '사용자 자연어', detail: '"닭가슴살 먹고 30분 뛰었어"' },
-        { label: 'Function Calling (pass 1)', detail: 'tool 호출로 기록 작업 결정' },
-        { label: '서버 CRUD · 칼로리 재계산', detail: '식단·운동 레코드 반영' },
-        { label: 'GPT (pass 2)', detail: 'json 자연어 응답 · 추천 생성' },
-      ],
-      outputs: [
-        { label: '식단 · 운동 레코드', detail: 'DB 근거 칼로리' },
-        { label: '맞춤 추천', detail: '1인칭 코칭' },
-      ],
+    architectureDiagram: {
+      src: '/projects/fitfoyo/architecture.html',
+      width: 1210,
+      height: 654,
     },
     sections: [
       {
@@ -152,18 +138,10 @@ export const projects: Project[] = [
       { type: 'image', src: '/projects/artune/artune_2.png' },
       { type: 'image', src: '/projects/artune/artune_3.png' },
     ],
-    pipeline: {
-      stages: [
-        { label: '사용자 입력', detail: '감정을 담은 글' },
-        { label: 'GPT-4.1-mini', detail: '감정 분석 · 시드곡 생성' },
-        { label: 'Last.fm', detail: '협업 필터링 확장' },
-        { label: 'iTunes Search', detail: '재생 가능 트랙 해석' },
-        { label: '지역 쿼터 선정', detail: '한국:팝:일본 6:3:1' },
-      ],
-      outputs: [
-        { label: 'Immerse', detail: '감정 심취 20곡' },
-        { label: 'Soothe', detail: '감정 완화 20곡' },
-      ],
+    architectureDiagram: {
+      src: '/projects/artune/architecture.html',
+      width: 1420,
+      height: 652,
     },
     sections: [
       {
