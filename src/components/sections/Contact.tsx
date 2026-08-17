@@ -46,7 +46,6 @@ export default function Contact() {
 
   return (
     <div className="relative flex-1 flex items-center justify-center">
-      {/* Contact 타이틀 — 상단 고정 */}
       <motion.p
         className="absolute top-30 left-1/2 -translate-x-1/2 text-lg font-semibold tracking-widest text-gray-500 dark:text-gray-400 uppercase"
         initial={{ opacity: 0, y: 10 }}
@@ -55,8 +54,6 @@ export default function Contact() {
       >
         Contact
       </motion.p>
-
-      {/* 버튼 — 정중앙 */}
       <motion.div
         ref={ref}
         className="flex gap-8"
@@ -80,8 +77,6 @@ export default function Contact() {
           </a>
         ))}
       </motion.div>
-
-      {/* 저작권 — 하단 고정 */}
       <p className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-300 dark:text-gray-600 whitespace-nowrap">
         © 2026 Lee SeMin. All Rights Reserved.
       </p>

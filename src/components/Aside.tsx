@@ -8,10 +8,8 @@ import { useThemeStore } from '@/store/themeStore';
 export type Section = 'home' | 'projects' | 'skills' | 'contact';
 
 const styles = {
-  // lg 미만: 하단 탭바 / lg 이상: 좌측 세로 사이드바.
-  // fixed — 문서(body)가 스크롤 주체가 되도록 레이아웃에서 빼둔다. 이렇게 해야 브라우저의
-  // 네이티브 스크롤 복원이 동작한다(중첩 overflow 컨테이너에는 적용되지 않음).
-  // 모달(z-50)보다는 아래, 본문보다는 위.
+  // lg 미만은 하단 탭바, 이상은 좌측 사이드바. fixed로 빼둬야 문서가 스크롤 주체가 되고
+  // 브라우저 네이티브 스크롤 복원이 동작한다. z-30은 모달(z-50) 아래, 본문 위.
   nav: [
     'fixed z-30 flex bg-[var(--background)] transition-colors duration-300',
     'bottom-0 left-0 right-0 h-16 flex-row items-center justify-around px-2',
@@ -28,8 +26,8 @@ const styles = {
   // 툴팁은 hover가 있는 데스크톱에서만 — 터치 기기에서는 의미가 없다.
   tooltip:
     'hidden lg:block absolute left-full ml-3 px-2 py-1 bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10',
-  // 하단 탭바에는 내비게이션만 두고, 테마 토글은 우측 상단에 따로 띄운다.
-  // lg 이상에서는 relative로 돌려 사이드바 맨 아래에 다시 들어간다.
+  // 탭바에는 내비게이션만 두고 토글은 우측 상단에 띄운다. lg에서는 relative로 돌려
+  // 사이드바 맨 아래로 복귀.
   toggleWrapper:
     'group flex items-center fixed top-4 right-4 z-30 lg:relative lg:top-auto lg:right-auto lg:mt-auto',
   toggleButton:
@@ -56,11 +54,9 @@ export default function Aside({ activeSection, onSectionChange }: AsideProps) {
   const { isDark, toggle } = useThemeStore();
   const [mounted, setMounted] = useState(false);
 
-  // 서버는 다크 여부를 알 수 없어 항상 라이트로 렌더링하지만, 클라이언트 스토어는 마운트
-  // 시점에 이미 실제 값을 동기적으로 읽어온다. Sun/Moon처럼 서로 다른 자식 엘리먼트로
-  // 갈리는 콘텐츠는 suppressHydrationWarning으로 못 막는다(텍스트 컨텐츠에만 적용됨).
-  // 하이드레이션이 끝난 뒤(레이아웃 이펙트, 페인트 전)에만 아이콘을 처음 마운트해서
-  // AnimatePresence의 initial={false}가 "진짜 첫 렌더"에 정상 적용되게 한다.
+  // 서버는 테마도 스크롤 위치도 모른다. 하이드레이션 전까지 테마 아이콘과 활성 표시를
+  // 보류해, 틀린 상태를 그렸다가 고치는 대신 확정된 뒤에 한 번만 그린다.
+  // (suppressHydrationWarning은 텍스트에만 통해서 Sun/Moon 교체에는 쓸 수 없다.)
   useLayoutEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
@@ -74,9 +70,6 @@ export default function Aside({ activeSection, onSectionChange }: AsideProps) {
         <div key={id} className={styles.navItem}>
           <button
             onClick={() => onSectionChange(id)}
-            // 서버는 사용자의 스크롤 위치를 알 수 없어 항상 첫 섹션을 활성으로 렌더링한다.
-            // 그 HTML은 JS보다 훨씬 먼저 페인트되므로, 하이드레이션 전까지는 아예 활성
-            // 표시를 하지 않는다 — 틀린 곳(소개)을 켰다가 옮기는 것보다 낫다.
             className={
               mounted && activeSection === id ? styles.buttonActive : styles.buttonInactive
             }

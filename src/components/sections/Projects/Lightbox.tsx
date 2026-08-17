@@ -39,15 +39,12 @@ export default function Lightbox({
       transition={{ duration: 0.2 }}
       onClick={onClose}
     >
-      {/* 닫기 */}
       <button
         className="absolute top-5 right-5 p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
         onClick={onClose}
       >
         <X size={22} />
       </button>
-
-      {/* 이전 */}
       {idx > 0 && (
         <button
           className="absolute left-5 p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
@@ -59,8 +56,6 @@ export default function Lightbox({
           <ChevronLeft size={28} />
         </button>
       )}
-
-      {/* 이미지 */}
       <AnimatePresence mode="wait">
         <motion.div
           key={idx}
@@ -81,8 +76,6 @@ export default function Lightbox({
           />
         </motion.div>
       </AnimatePresence>
-
-      {/* 다음 */}
       {idx < media.length - 1 && (
         <button
           className="absolute right-5 p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
@@ -94,8 +87,6 @@ export default function Lightbox({
           <ChevronRight size={28} />
         </button>
       )}
-
-      {/* 인디케이터 */}
       {media.length > 1 && (
         <div className="absolute bottom-5 flex gap-2">
           {media.map((_, i) => (

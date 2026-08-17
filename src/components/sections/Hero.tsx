@@ -6,16 +6,15 @@ import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 
 const styles = {
-  wrapper: 'flex-1 flex flex-col items-center justify-center gap-12 px-5 md:px-10 lg:gap-22 lg:px-16',
-  // 좁은 화면에서는 사진을 위, 텍스트를 아래로 한 줄씩 쌓는다.
-  grid:
-    'flex flex-col-reverse items-center gap-8 w-full max-w-3xl md:grid md:grid-cols-2 md:gap-12 md:items-center lg:gap-20',
+  wrapper:
+    'flex-1 flex flex-col items-center justify-center gap-12 px-5 md:px-10 lg:gap-22 lg:px-16',
+
+  grid: 'flex flex-col-reverse items-center gap-8 w-full max-w-3xl md:grid md:grid-cols-2 md:gap-12 md:items-center lg:gap-20',
   textCol: 'flex flex-col gap-1 text-center md:text-left',
   greeting: 'text-xl text-gray-400 dark:text-gray-500 md:text-2xl',
   typingRow: 'text-2xl leading-snug sm:text-3xl lg:text-4xl',
   typingText: 'text-yellow-400 dark:text-yellow-400',
-  cursor:
-    'inline-block w-0.5 h-6 sm:h-7 lg:h-9 bg-gray-900 dark:bg-gray-100 ml-1 align-middle',
+  cursor: 'inline-block w-0.5 h-6 sm:h-7 lg:h-9 bg-gray-900 dark:bg-gray-100 ml-1 align-middle',
   staticText: 'text-gray-900 dark:text-gray-100',
   photoCol: 'flex justify-center',
   photoWrapper: 'w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-2xl overflow-hidden',
@@ -37,16 +36,12 @@ const rotatingWords = [
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
-
-  // 단어 순환
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % rotatingWords.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  // 타이핑 효과
   useEffect(() => {
     const word = rotatingWords[index];
     setDisplayedText('');
@@ -64,12 +59,13 @@ export default function Hero() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {/* 왼쪽: 텍스트 */}
         <div className={styles.textCol}>
           <p className={styles.greeting}>안녕하세요!</p>
-          <div className={styles.typingRow}>
+          {/* 페이지의 유일한 h1 — preflight가 heading 기본 스타일을 지우므로 외형은 그대로다 */}
+          <h1 className={styles.typingRow}>
             <span className={styles.typingText}>{displayedText}</span>
             <motion.span
+              aria-hidden
               animate={{ opacity: [1, 0] }}
               transition={{
                 duration: 0.5,
@@ -81,10 +77,8 @@ export default function Hero() {
             />
             <br />
             <span className={styles.staticText}>개발자 이세민입니다.</span>
-          </div>
+          </h1>
         </div>
-
-        {/* 오른쪽: 사진 */}
         <div className={styles.photoCol}>
           <div className={styles.photoWrapper}>
             <Image

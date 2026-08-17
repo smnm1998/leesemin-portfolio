@@ -6,59 +6,34 @@ import Hero from '@/components/sections/Hero';
 import Skills from '@/components/sections/Skills';
 import Projects from '@/components/sections/Projects';
 import Contact from '@/components/sections/Contact';
-import {
-  saveMainScroll,
-  saveActiveSection,
-  consumeTargetSection,
-  consumeTargetScroll,
-} from '@/lib/scrollMemory';
+import { saveMainScroll, consumeReturnIntent } from '@/lib/scrollMemory';
+import { ACTIVE_LINE_ROOT_MARGIN, resolveActiveSection } from '@/lib/activeSection';
 
 const sections: Section[] = ['home', 'skills', 'projects', 'contact'];
 const isSection = (value: string): value is Section => sections.includes(value as Section);
-
-// 현재 스크롤 위치 기준으로 활성 섹션을 즉시 계산한다. IntersectionObserver는 첫 콜백이
-// 비동기라 그걸 기다리면 기본값(소개)이 한 프레임 보였다 사라진다.
-function resolveActiveSection(): Section {
-  const viewportMiddle = window.innerHeight / 2;
-
-  for (const id of sections) {
-    const rect = document.getElementById(id)?.getBoundingClientRect();
-    if (rect && rect.top <= viewportMiddle && rect.bottom >= viewportMiddle) return id;
-  }
-
-  return 'home';
-}
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState<Section>('home');
   const resolvedInitialPosition = useRef(false);
 
-  // 문서 자체가 스크롤되므로, 새로고침·뒤로가기의 위치 복원은 브라우저 네이티브 기능이
-  // 첫 페인트 전에 알아서 처리한다(여기서 아무것도 하지 않는 게 정답 — JS로 복원하면
-  // 하이드레이션 이후에나 실행돼서 잘못된 위치가 잠깐 보인다).
-  //
-  // 여기서 처리할 건 SPA 내비게이션으로 넘어온 "명시적 요청"뿐이다. 두 마커 모두 읽는 즉시
-  // 지워지는 1회성이라, ref로 가드해 Strict Mode의 이펙트 이중 실행에 소비되지 않게 한다.
+  // 새로고침·뒤로가기 위치는 브라우저 네이티브 복원에 맡긴다(JS로 하면 하이드레이션
+  // 이후라 항상 늦다). 여기서는 SPA 이동으로 넘어온 1회성 요청만 처리하며, 읽는 즉시
+  // 지워지는 값이라 Strict Mode의 이펙트 이중 실행에 소비되지 않도록 ref로 가드한다.
   useLayoutEffect(() => {
     if (resolvedInitialPosition.current) return;
     resolvedInitialPosition.current = true;
 
-    const target = consumeTargetSection();
-    if (target && isSection(target)) {
-      document.getElementById(target)?.scrollIntoView({ behavior: 'auto', block: 'start' });
-    } else {
-      const targetScroll = consumeTargetScroll();
-      if (targetScroll !== null) window.scrollTo(0, targetScroll);
+    const intent = consumeReturnIntent();
+    if (intent && 'section' in intent && isSection(intent.section)) {
+      document.getElementById(intent.section)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+    } else if (intent && 'scrollY' in intent) {
+      window.scrollTo(0, intent.scrollY);
     }
 
-    // 스크롤 위치가 확정된 뒤 활성 섹션을 동기적으로 맞춘다(페인트 전에 flush됨).
+    // 위치가 확정된 뒤 동기적으로 맞춘다 — 옵저버의 첫 콜백을 기다리면 한 프레임 어긋난다.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveSection(resolveActiveSection());
+    setActiveSection(resolveActiveSection(sections, 'home'));
   }, []);
-
-  useEffect(() => {
-    saveActiveSection(activeSection);
-  }, [activeSection]);
 
   // 상세페이지에서 "목록으로" 돌아올 때 쓸 수 있도록 현재 위치를 계속 기록해둔다.
   useEffect(() => {
@@ -87,10 +62,7 @@ export default function Home() {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id);
         },
-        // 위아래를 50%씩 깎아 뷰포트 정중앙에 걸친 섹션만 잡는다. threshold로 "섹션의 n%가
-        // 보이는가"를 보면, 뷰포트보다 긴 섹션(좁은 화면의 Projects)은 그 비율에 영원히
-        // 도달하지 못해 활성화되지 않는다. resolveActiveSection()의 기준과도 일치한다.
-        { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
+        { rootMargin: ACTIVE_LINE_ROOT_MARGIN, threshold: 0 },
       );
       observer.observe(el);
       observers.push(observer);

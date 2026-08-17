@@ -17,12 +17,20 @@ const styles = {
   overlay: 'fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col',
   overlayBar: 'flex items-center justify-between px-4 py-3 shrink-0',
   overlayTitle: 'text-sm text-white/70',
-  closeButton: 'p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors',
+  closeButton:
+    'p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors',
+
   // 다이어그램이 가로로 넓어서, 높이를 화면에 맞추고 가로로 스크롤해 훑어보게 한다.
   scroller: 'flex-1 overflow-x-auto overflow-y-hidden px-4 pb-4',
   hint: 'text-center text-xs text-white/40 pb-3 shrink-0',
 } as const;
 
+/**
+ * 화면 폭에 따라 표현을 바꾸는 아키텍처 다이어그램.
+ *
+ * lg 이상은 상세 다이어그램을 인라인으로, 미만은 세로로 읽히는 pipeline 요약을 보여준 뒤
+ * 전체화면에서 좌우로 훑어보게 한다.
+ */
 export default function ArchitectureDiagram({
   diagram,
   title,
