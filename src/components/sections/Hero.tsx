@@ -85,7 +85,7 @@ export default function Hero() {
         <div className={styles.photoCol}>
           <div className={styles.photoWrapper}>
             <Image
-              src="/iam.jpeg"
+              src="/lsm.jpeg"
               alt="이세민"
               width={144}
               height={144}
