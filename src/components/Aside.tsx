@@ -98,7 +98,11 @@ export default function Aside({ activeSection, onSectionChange }: AsideProps) {
                 transition={{ duration: 0.2 }}
                 className={isDark ? styles.toggleIconDark : styles.toggleIconLight}
               >
-                {isDark ? <Sun size={18} /> : <Moon size={18} fill="currentColor" strokeWidth={0} />}
+                {isDark ? (
+                  <Sun size={18} />
+                ) : (
+                  <Moon size={18} fill="currentColor" strokeWidth={0} />
+                )}
               </motion.span>
             </AnimatePresence>
           )}
