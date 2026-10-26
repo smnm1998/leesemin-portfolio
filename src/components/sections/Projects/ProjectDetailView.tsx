@@ -61,8 +61,9 @@ export default function ProjectDetailView({ project }: { project: Project }) {
     router.push('/', { scroll: false });
   };
 
-  // router.back()을 쓰면 임베드 다이어그램(iframe)의 테마 전환이 쌓아둔 히스토리를 되감아
-  // 페이지를 벗어나지 못한다. 저장된 위치로 forward navigation만 한다.
+  // router.back() 대신 저장해 둔 위치로 push한다. 공유 링크·새 탭으로 상세에 직접 들어온 경우엔
+  // 되돌아갈 앱 내 기록이 없어 back()이 사이트를 벗어나고, 새로고침하면 메모리 상태가 사라지지만
+  // sessionStorage 값은 남아 같은 위치로 돌아갈 수 있기 때문이다.
   const goBackToList = () => {
     const previousScroll = readMainScroll();
     saveReturnIntent(

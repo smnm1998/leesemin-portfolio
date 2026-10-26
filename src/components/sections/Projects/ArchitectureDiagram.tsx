@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Maximize2 } from 'lucide-react';
 import type { PipelineStage } from '@/data/projects';
@@ -25,6 +25,58 @@ const styles = {
   hint: 'text-center text-xs text-white/40 pb-3 shrink-0',
 } as const;
 
+const subscribeNothing = () => () => {};
+
+/** 서버 렌더와 하이드레이션 중에는 false, 그 직후 클라이언트 렌더부터 true. */
+const useHydrated = () =>
+  useSyncExternalStore(
+    subscribeNothing,
+    () => true,
+    () => false,
+  );
+
+/**
+ * 사이트 테마를 따라가는 다이어그램 iframe.
+ *
+ * 테마가 바뀔 때마다 src를 바꾸면 iframe이 다시 로드되고 브라우저 history에 항목이 쌓인다.
+ * 같은 출처라서 처음 한 번만 `?theme=`로 열고, 이후 전환은 문서의 `data-theme`만 바꾼다.
+ * 서버는 테마를 알 수 없으므로 하이드레이션 이후에만 렌더해야 처음부터 맞는 테마로 열린다.
+ */
+function DiagramFrame({
+  src,
+  title,
+  loading,
+}: {
+  src: string;
+  title: string;
+  loading?: 'lazy' | 'eager';
+}) {
+  const isDark = useThemeStore((s) => s.isDark);
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  // 첫 로드에만 쓰는 값. 이후 테마가 바뀌어도 src는 그대로 둔다.
+  const [initialTheme] = useState(() => (useThemeStore.getState().isDark ? 'dark' : 'light'));
+
+  const applyTheme = () => {
+    frameRef.current?.contentDocument?.documentElement.setAttribute(
+      'data-theme',
+      isDark ? 'dark' : 'light',
+    );
+  };
+
+  useEffect(applyTheme);
+
+  return (
+    <iframe
+      ref={frameRef}
+      src={`${src}?embed=1&theme=${initialTheme}`}
+      title={title}
+      loading={loading}
+      className={styles.iframe}
+      onLoad={applyTheme}
+    />
+  );
+}
+
 /**
  * 화면 폭에 따라 표현을 바꾸는 아키텍처 다이어그램.
  *
@@ -40,9 +92,8 @@ export default function ArchitectureDiagram({
   title: string;
   pipeline?: { stages: PipelineStage[]; outputs: PipelineStage[] };
 }) {
-  const isDark = useThemeStore((s) => s.isDark);
+  const hydrated = useHydrated();
   const [expanded, setExpanded] = useState(false);
-  const src = `${diagram.src}?embed=1&theme=${isDark ? 'dark' : 'light'}`;
 
   // 전체화면으로 열려 있는 동안 배경 스크롤을 막고, ESC로 닫는다.
   useEffect(() => {
@@ -68,7 +119,7 @@ export default function ArchitectureDiagram({
         className={`hidden lg:block ${styles.frame}`}
         style={{ aspectRatio: `${diagram.width} / ${diagram.height}` }}
       >
-        <iframe src={src} title={title} loading="lazy" className={styles.iframe} />
+        {hydrated && <DiagramFrame src={diagram.src} title={title} loading="lazy" />}
       </div>
 
       {/* 모바일·태블릿: 세로로 읽히는 요약 + 전체화면으로 여는 버튼 */}
@@ -105,7 +156,7 @@ export default function ArchitectureDiagram({
                 className="h-full rounded-xl overflow-hidden bg-gray-100 dark:bg-white/5"
                 style={{ aspectRatio: `${diagram.width} / ${diagram.height}` }}
               >
-                <iframe src={src} title={title} className={styles.iframe} />
+                <DiagramFrame src={diagram.src} title={title} />
               </div>
             </div>
 
