@@ -21,7 +21,9 @@ export type TimingRow = {
 };
 
 export default function TimingChart({ rows }: { rows: TimingRow[] }) {
-  const max = Math.max(...rows.map((row) => row.segments.reduce((sum, seg) => sum + seg.seconds, 0)));
+  const max = Math.max(
+    ...rows.map((row) => row.segments.reduce((sum, seg) => sum + seg.seconds, 0)),
+  );
 
   return (
     <div className={styles.panel}>

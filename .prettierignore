@@ -1,0 +1,5 @@
+# 생성 산출물·잠금 파일·문서는 포맷 검사에서 제외한다 (코드만 검사)
+# .next, node_modules 등 .gitignore 대상은 Prettier가 기본으로 건너뛴다.
+public
+pnpm-lock.yaml
+README.md

@@ -21,58 +21,50 @@ const styles = {
 } as const;
 
 export default function ProjectRow({ project, isFirst }: { project: Project; isFirst: boolean }) {
-  const isPlaceholder = !project.description;
-
   return (
     <>
       {!isFirst && <hr className={`${styles.rowDivider} mb-10`} />}
       <div className={styles.row}>
         <motion.div className={styles.content} variants={fadeUpVariants}>
-          {isPlaceholder ? (
-            <p className="text-gray-300 dark:text-gray-600 text-sm">준비 중입니다.</p>
-          ) : (
-            <>
-              {project.context && <span className={styles.context}>{project.context}</span>}
-              <div className="flex items-baseline gap-3">
-                <h2 className={styles.name}>{project.name}</h2>
-                {project.period && (
-                  <span className="text-sm text-gray-400 dark:text-gray-500">{project.period}</span>
-                )}
-              </div>
-              <p className={styles.desc}>{project.description}</p>
-              <TechTags tech={project.tech} />
-              <div className={styles.links}>
-                {project.github ? (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.link}
-                  >
-                    <ExternalLink size={14} /> GitHub
-                  </a>
-                ) : (
-                  <span className={styles.linkDisabled}>
-                    <ExternalLink size={14} /> GitHub
-                  </span>
-                )}
-                {project.live ? (
-                  <a
-                    href={project.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.link}
-                  >
-                    <ExternalLink size={14} /> Live
-                  </a>
-                ) : (
-                  <span className={styles.linkDisabled}>
-                    <ExternalLink size={14} /> Live
-                  </span>
-                )}
-              </div>
-            </>
-          )}
+          {project.context && <span className={styles.context}>{project.context}</span>}
+          <div className="flex items-baseline gap-3">
+            <h2 className={styles.name}>{project.name}</h2>
+            {project.period && (
+              <span className="text-sm text-gray-400 dark:text-gray-500">{project.period}</span>
+            )}
+          </div>
+          <p className={styles.desc}>{project.description}</p>
+          <TechTags tech={project.tech} />
+          <div className={styles.links}>
+            {project.github ? (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                <ExternalLink size={14} /> GitHub
+              </a>
+            ) : (
+              <span className={styles.linkDisabled}>
+                <ExternalLink size={14} /> GitHub
+              </span>
+            )}
+            {project.live ? (
+              <a
+                href={project.live}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                <ExternalLink size={14} /> Live
+              </a>
+            ) : (
+              <span className={styles.linkDisabled}>
+                <ExternalLink size={14} /> Live
+              </span>
+            )}
+          </div>
         </motion.div>
         <ProjectMockup project={project} />
       </div>

@@ -26,8 +26,7 @@ export type Project = {
   tech: string[];
   github: string;
   live: string;
-  gradient: string;
-  media?: MediaItem[];
+  media: MediaItem[];
   /**
    * 임베드할 상세 아키텍처 다이어그램. 가로로 넓어 데스크톱에서만 인라인으로 보여준다.
    * width/height는 SVG viewBox 크기로, 종횡비를 맞추는 데 쓴다.
@@ -74,7 +73,6 @@ export const projects: Project[] = [
     ],
     github: 'https://github.com/smnm1998/fit-fo-yo',
     live: 'https://fitfoyo.vercel.app',
-    gradient: 'from-emerald-500 via-green-600 to-teal-700',
     media: [
       {
         type: 'video',
@@ -179,7 +177,6 @@ export const projects: Project[] = [
     ],
     github: 'https://github.com/smnm1998/artune',
     live: 'https://om-artune.vercel.app',
-    gradient: 'from-violet-500 via-purple-600 to-indigo-700',
     media: [
       { type: 'image', src: '/projects/artune/artune_1.png' },
       { type: 'image', src: '/projects/artune/artune_2.png' },
@@ -312,7 +309,6 @@ export const projects: Project[] = [
     ],
     github: 'https://github.com/smnm1998/culture_chatbot',
     live: '',
-    gradient: 'from-yellow-500 via-amber-600 to-orange-700',
     media: [
       { type: 'image', src: '/projects/sangsang/main.png', width: 572, height: 1247 },
       { type: 'image', src: '/projects/sangsang/local.png', width: 576, height: 1245 },
