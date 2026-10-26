@@ -17,7 +17,6 @@ import TechTags from './TechTags';
 
 const styles = {
   // 홈과 동일하게 문서가 스크롤 주체 — 내비게이션은 fixed, 본문은 그만큼 밀어준다.
-  shell: '',
   main: 'pb-16 lg:pb-0 lg:ml-16',
   wrapper: 'flex flex-col items-center px-5 py-12 md:px-10 lg:px-16 lg:py-20',
   inner: 'w-full max-w-5xl flex flex-col gap-10',
@@ -73,7 +72,7 @@ export default function ProjectDetailView({ project }: { project: Project }) {
   };
 
   return (
-    <div className={styles.shell}>
+    <div>
       <Aside activeSection="projects" onSectionChange={goToSection} />
 
       <main className={styles.main}>
